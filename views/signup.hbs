@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Bootstrap CSS link (replace with your own or use CDN) -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS link (replace with your own or use CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        /* Add custom styles for centering */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Customize form border */
+        .form-outline {
+            border: 1px solid #28a745; /* Change to your desired color */
+        }
+
+        /* Customize success text size and color */
+        .btn-success {
+            font-size: 16px;
+            color: #000000; /* Change to your desired color */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Bootstrap Modal -->
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Signup</h5>
+            </div>
+            <div class="modal-body">
+                <form action="/submit" method="post">
+                    <!-- name input -->
+                    <div class="form-outline mb-4">
+                        <input type="text" name="username" id="usernameInput" class="form-control form-control-lg" autocomplete="off" />
+                        <label class="form-label" for="usernameInput">Username</label>
+                        <small id="name-error" style="color: red; display: none;">Invalid name format</small>
+                    </div>
+                    <!-- email input -->
+                    <div class="form-outline mb-4">
+                        <input type="email" name="email" id="emailInput" class="form-control form-control-lg" autocomplete="off" />
+                        <label class="form-label" for="emailInput">Email</label>
+                        <small id="email-error" style="color: red; display: none;">Invalid email format</small>
+                    </div>
+                    <!-- Password input -->
+                    <div class="form-outline mb-4">
+                        <input type="password" name="password" id="passwordInput" class="form-control form-control-lg" />
+                        <label class="form-label" for="passwordInput">Password</label>
+                        <small id="password-error" style="color: red; display: none;">Password must be at least 8 characters long</small>
+                    </div>
+                    <!-- Repeat Password input -->
+                    <div class="form-outline mb-4">
+                        <input type="password" name="repeatPassword" id="repeatPasswordInput" class="form-control form-control-lg" />
+                        <label class="form-label" for="repeatPasswordInput">Repeat Password</label>
+                        <small id="repeat-password-error" style="color: red; display: none;">Passwords do not match</small>
+                    </div>
+
+                    <!-- Submit button -->
+                    <button type="button" class="btn btn-light bg-success text-white mt-3" onclick="validateAndSubmit()">Submit</button>
+                </form>
+
+<script>
+    function validateAndSubmit() {
+        var nameInput = document.getElementById("usernameInput");
+        var emailInput = document.getElementById("emailInput");
+        var passwordInput = document.getElementById("passwordInput");
+        var repeatPasswordInput = document.getElementById("repeatPasswordInput");
+
+        var nameError = document.getElementById("name-error");
+        var emailError = document.getElementById("email-error");
+        var passwordError = document.getElementById("password-error");
+        var repeatPasswordError = document.getElementById("repeat-password-error");
+
+        var isValidName = /^[a-zA-Z\s]{3,}$/.test(nameInput.value);
+        var isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
+        var isValidPassword = passwordInput.value.length >= 8;
+        var isPasswordMatch = passwordInput.value === repeatPasswordInput.value;
+
+        if (!isValidName) {
+            nameError.style.display = "block";
+        } else {
+            nameError.style.display = "none";
+        }
+
+        if (!isValidEmail) {
+            emailError.style.display = "block";
+        } else {
+            emailError.style.display = "none";
+        }
+
+        if (!isValidPassword) {
+            passwordError.style.display = "block";
+        } else {
+            passwordError.style.display = "none";
+        }
+
+        if (!isPasswordMatch) {
+            repeatPasswordError.style.display = "block";
+        } else {
+            repeatPasswordError.style.display = "none";
+        }
+
+        // If all validations pass, you can submit the form
+        if (isValidName && isValidEmail && isValidPassword && isPasswordMatch) {
+            document.forms[0].submit();
+        }
+    }
+</script>
+
+                
+                
+
+    <!-- Bootstrap JavaScript and jQuery (replace with your own or use CDN) -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,314 @@
+<!-- Your HTML content for the home page -->
+{{!-- <h1> user data </h1> --}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body {
+      background-color: #f7f7f7;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+
+    .heading {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .user-details {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .button {
+      flex: 1;
+      height: 50px;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .edit-button {
+      background-color: #007bff;
+    }
+
+    .delete-button {
+      background-color: #dc3545;
+    }
+
+    .logout-button {
+      background-color: #17a2b8;
+    }
+
+    /* Updated modal styles for a shopping website */
+    .modal-dialog {
+      max-width: 500px;
+    }
+
+    .modal-content {
+      border: none;
+      border-radius: 10px;
+    }
+
+    .modal-header {
+      background-color: #007bff;
+      color: #fff;
+      border-bottom: none;
+    }
+
+    .modal-title {
+      font-weight: bold;
+    }
+
+    .modal-body {
+      background-color: #f7f7f7;
+    }
+
+    .modal-footer {
+      border-top: none;
+    }
+
+    .btn-close {
+      color: #fff;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      border: none;
+    }
+
+    .btn-danger:hover {
+      background-color: #bb2b32;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="heading">User Profile</h1>
+
+    {{#if user}}
+      <div class="user-details">
+        <p>Email: {{ user.email }}</p>
+        <p>Username: {{ user.name }}</p>
+      </div>
+
+      <div class="button-container">
+        <div class="button edit-button" data-bs-toggle="modal" data-bs-target="#myModal" id="editButton" onclick="fetchUserData('{{ user._id }}', '{{ user.name }}', '{{ user.email }}')">
+          Edit
+        </div>
+
+        <a href="/delete">
+          <div class="button delete-button" onclick="deleteUser()">Delete</div>
+        </a>
+
+        <a href="/logout">
+          <div class="button logout-button">Logout</div>
+        </a>
+      </div>
+    </div>
+    {{else}}
+      <p class="user-details">Please log in to view user data.</p>
+    {{/if}}
+  </div>
+
+  <!-- The Modal -->
+  <div class="modal" id="myModal">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Edit User Data</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form id="editForm">
+            <!-- Hidden input field to store the user ID -->
+            <input type="hidden" id="userId">
+            <div class="mb-3">
+              <label for="name">Name:</label>
+              <input type="text" id="name" name="name" class="form-control">
+              <div id="nameValidationMessage" class="text-danger"></div>
+            </div>
+            <div class="mb-3">
+              <label for="email">Email:</label>
+              <input type="email" id="email" name="email" class="form-control">
+              <div id="emailValidationMessage" class="text-danger"></div>
+            </div>
+          </form>
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <a href="/close">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+          </a>
+          <button type="button" class="btn btn-danger" id="saveButton" onclick="updateUser()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+
+
+<script>
+  function validateForm() {
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+    var nameValidationMessage = document.getElementById("nameValidationMessage");
+    var emailValidationMessage = document.getElementById("emailValidationMessage");
+    var valid = true;
+
+  
+    if (!name.trim()) {
+      nameValidationMessage.innerHTML = "Name is required.";
+      valid = false;
+    } else {
+      nameValidationMessage.innerHTML = "";
+    }
+
+    if (!email.trim()) {
+      emailValidationMessage.innerHTML = "Email is required.";
+      valid = false;
+    } else if (!isValidEmail(email)) {
+      emailValidationMessage.innerHTML = "Invalid email format.";
+      valid = false;
+    } else {
+      emailValidationMessage.innerHTML = "";
+    }
+
+    return valid;
+  }
+
+  // Function to validate email format
+  function isValidEmail(email) {
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  function updateUser() {
+    if (validateForm()) {
+   
+    }
+  }
+</script>
+
+  
+
+
+    <script>
+      function deleteUser() {
+        fetch(`/delete/`, {
+          method: 'DELETE',
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Delete request failed');
+            } else {
+              document.location.href = "/"
+            }
+
+          })
+          .catch((error) => {
+            console.error(error);
+
+          });
+      }
+    </script>
+
+</div>
+
+
+
+
+
+<script>
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const userIdInput = document.getElementById('userId');
+
+  function fetchUserData(id, name, email) {
+    userIdInput.value = id || '';
+    nameInput.value = name || '';
+    emailInput.value = email || '';
+  }
+
+  function updateUser() {
+    const updatedName = nameInput.value;
+    const updatedEmail = emailInput.value;
+    const userId = userIdInput.value;
+
+    fetch('/edit', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        _id: userId,
+        name: updatedName,
+        email: updatedEmail,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to update user data');
+        }
+        
+        alert('Data saved successfully!'); 
+        
+  
+      })
+       
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+
+
+   
+
+   
+
+
+
+</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js"></script>
+  
+</body>
